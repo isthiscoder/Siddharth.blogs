@@ -1,0 +1,26 @@
+{%- comment -%}
+  Works out the link, thumbnail and platform name for a video.
+  Input:  vd_url (link to the video anywhere), vd_thumb (optional image)
+  Output: vd_url, vd_thumb, vd_platform
+  YouTube links get their thumbnail automatically if you don't give one.
+{%- endcomment -%}
+{%- assign vd_id = "" -%}
+{%- assign vd_platform = "Watch" -%}
+{%- if vd_url contains "youtu.be/" -%}
+  {%- assign vd_id = vd_url | split: "youtu.be/" | last | split: "?" | first -%}
+{%- elsif vd_url contains "/shorts/" -%}
+  {%- assign vd_id = vd_url | split: "/shorts/" | last | split: "?" | first -%}
+{%- elsif vd_url contains "youtube.com" and vd_url contains "v=" -%}
+  {%- assign vd_id = vd_url | split: "v=" | last | split: "&" | first -%}
+{%- endif -%}
+{%- if vd_url contains "youtu" -%}{%- assign vd_platform = "Watch on YouTube" -%}
+{%- elsif vd_url contains "vimeo.com" -%}{%- assign vd_platform = "Watch on Vimeo" -%}
+{%- elsif vd_url contains "instagram.com" -%}{%- assign vd_platform = "Watch on Instagram" -%}
+{%- elsif vd_url contains "x.com" or vd_url contains "twitter.com" -%}{%- assign vd_platform = "Watch on X" -%}
+{%- elsif vd_url contains "linkedin.com" -%}{%- assign vd_platform = "Watch on LinkedIn" -%}
+{%- endif -%}
+{%- if vd_thumb == nil or vd_thumb == "" -%}
+  {%- if vd_id != "" -%}{%- assign vd_thumb = "https://i.ytimg.com/vi/" | append: vd_id | append: "/hqdefault.jpg" -%}{%- endif -%}
+{%- else -%}
+  {%- unless vd_thumb contains "://" -%}{%- assign vd_thumb = vd_thumb | relative_url -%}{%- endunless -%}
+{%- endif -%}

@@ -1,0 +1,71 @@
+---
+layout: default
+---
+{%- comment -%}
+  Lists every post whose front matter has  category: <page.section>
+  page.style: "list" (default), "grid" (photo wall, Images page) or "videos"
+{%- endcomment -%}
+{% assign items = site.categories[page.section] %}
+<header class="section-head">
+  <h1 class="section-title">{{ page.title }}</h1>
+  {% if page.intro %}<p class="section-intro">{{ page.intro }}</p>{% endif %}
+</header>
+
+{{ content }}
+
+{% if items == nil or items.size == 0 %}
+  <p class="empty">Nothing here yet.</p>
+{% elsif page.style == "grid" %}
+  {%- comment -%} Every photo from every images post, newest first, grouped by month. {%- endcomment -%}
+  {%- assign month = "" -%}
+  {%- for post in items -%}
+    {%- assign m = post.date | date: "%B %Y" -%}
+    {%- if m != month -%}
+      {%- unless forloop.first -%}</div>{%- endunless -%}
+      <h2 class="month">{{ m }}</h2>
+      <div class="photo-wall">
+      {%- assign month = m -%}
+    {%- endif -%}
+    {%- assign d = post.date | date: "%B %-d, %Y" -%}
+    {%- assign link = post.url | relative_url -%}
+    {%- if post.photos -%}
+      {%- for ph in post.photos -%}
+        {%- assign p = ph.src -%}
+        {%- unless p contains '://' -%}{%- assign p = p | relative_url -%}{%- endunless -%}
+        <img src="{{ p }}" alt="{{ ph.alt | default: ph.title | escape }}" loading="lazy" data-zoom data-title="{{ ph.title | default: post.title | escape }}" data-date="{{ d }}" data-post="{{ link }}">
+      {%- endfor -%}
+    {%- elsif post.cover -%}
+      <img src="{{ post.cover | relative_url }}" alt="{{ post.title | escape }}" loading="lazy" data-zoom data-title="{{ post.title | escape }}" data-date="{{ d }}" data-post="{{ link }}">
+    {%- endif -%}
+    {%- if forloop.last -%}</div>{%- endif -%}
+  {%- endfor -%}
+{% elsif page.style == "videos" %}
+  <div class="tile-grid">
+  {% for post in items %}
+    {%- assign vd_url = post.video | default: post.url | relative_url -%}
+    {%- assign vd_thumb = post.thumbnail | default: post.cover -%}
+    {%- assign vd_loop = post.loop -%}
+    {%- include video-data.html -%}
+    <div class="tile">
+      <a class="video-thumb" href="{{ vd_url }}" target="_blank" rel="noopener" aria-label="{{ vd_platform }}: {{ post.title | escape }}">
+        {%- if vd_loop -%}<video autoplay muted loop playsinline preload="metadata" data-loop{% if vd_thumb %} poster="{{ vd_thumb }}"{% endif %}><source src="{{ vd_loop | relative_url }}" type="video/mp4"></video>
+        {%- elsif vd_thumb -%}<img src="{{ vd_thumb }}" alt="" loading="lazy">{%- endif -%}
+        <span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg></span>
+        {%- if post.duration -%}<span class="duration">{{ post.duration }}</span>{%- endif -%}
+      </a>
+      <a class="tile-title" href="{{ post.url | relative_url }}">{{ post.title }}</a>
+      <span class="tile-date">{{ post.date | date: "%B %-d, %Y" }} · <a href="{{ vd_url }}" target="_blank" rel="noopener">{{ vd_platform }}</a></span>
+    </div>
+  {% endfor %}
+  </div>
+{% else %}
+  <section class="post-list">
+  {% for post in items %}
+    <article class="entry">
+      {% include meta.html post=post %}
+      <h2 class="entry-title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
+      <p class="entry-excerpt">{{ post.subtitle | default: post.excerpt | strip_html | truncatewords: 40 }}</p>
+    </article>
+  {% endfor %}
+  </section>
+{% endif %}

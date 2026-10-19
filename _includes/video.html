@@ -1,0 +1,28 @@
+{%- comment -%}
+  A video card: thumbnail (or a short silent loop) + play button, linking OUT to where the video lives.
+  No video is hosted on this site.
+
+  {% include video.html url="https://www.youtube.com/watch?v=VIDEO_ID" caption="What it is" %}
+  Options:
+    thumb="/assets/images/my-thumb.jpg"   your own thumbnail (YouTube links get one automatically)
+    loop="/assets/videos/teaser.mp4"      a short silent looping clip (2–5 s, under 3 MB) instead of a still
+    duration="12:04"                      shown in the corner
+    width="wide" | "full"
+  In a post you can skip url/thumb/loop: the include falls back to the post's
+  video:, thumbnail: and loop: front matter.
+{%- endcomment -%}
+{%- assign vd_url = include.url | default: page.video -%}
+{%- assign vd_thumb = include.thumb | default: page.thumbnail -%}
+{%- assign vd_loop = include.loop | default: page.loop -%}
+{%- include video-data.html -%}
+<figure class="video-card {{ include.width }}"><a class="video-thumb" href="{{ vd_url }}" target="_blank" rel="noopener" aria-label="{{ vd_platform }}{% if include.caption %}: {{ include.caption | strip_html | escape }}{% endif %}">
+{%- if vd_loop -%}
+<video autoplay muted loop playsinline preload="metadata" data-loop{% if vd_thumb %} poster="{{ vd_thumb }}"{% endif %}><source src="{{ vd_loop | relative_url }}" type="video/mp4"></video>
+{%- elsif vd_thumb -%}
+<img src="{{ vd_thumb }}" alt="" loading="lazy">
+{%- endif -%}
+<span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg></span>
+{%- if include.duration -%}<span class="duration">{{ include.duration }}</span>{%- endif -%}
+</a>
+<figcaption>{%- if include.caption -%}<span>{{ include.caption | markdownify | remove: '<p>' | remove: '</p>' | strip }}</span>{%- endif -%}<a class="watch" href="{{ vd_url }}" target="_blank" rel="noopener">{{ vd_platform }}</a></figcaption>
+</figure>

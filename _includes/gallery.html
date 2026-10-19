@@ -1,0 +1,37 @@
+{%- comment -%}
+  A grid of photos. Two ways to use it:
+
+  1. Quick — paths separated by commas:
+     {% include gallery.html images="/assets/images/a.jpg, /assets/images/b.jpg" caption="A day in the lab" %}
+
+  2. With a title for every photo — list them in the post's front matter, then just write {% include gallery.html %}
+     photos:
+       - src: /assets/images/a.jpg
+         title: "Ghats at first light"
+       - src: /assets/images/b.jpg
+         title: "Boats, 6 a.m."
+     (Photos listed this way also appear on the Images page.)
+
+  Optional: columns="2" (default 3), width="full"
+{%- endcomment -%}
+{%- assign g_date = "" -%}
+{%- if page.date -%}{%- assign g_date = page.date | date: '%B %-d, %Y' -%}{%- endif -%}
+{%- assign g_caption = include.caption | markdownify | strip_html | strip -%}
+<figure class="gallery {{ include.width | default: 'wide' }}" style="--cols: {{ include.columns | default: 3 }}"><div class="gallery-grid">
+{%- if include.images -%}
+  {%- assign list = include.images | split: ',' -%}
+  {%- for raw in list -%}
+    {%- assign p = raw | strip -%}
+    {%- unless p contains '://' -%}{%- assign p = p | relative_url -%}{%- endunless -%}
+<img src="{{ p }}" alt="" loading="lazy" data-zoom data-title="{{ g_caption | default: page.title | escape }}"{% if g_date != "" %} data-date="{{ g_date }}"{% endif %}>
+  {%- endfor -%}
+{%- else -%}
+  {%- for ph in page.photos -%}
+    {%- assign p = ph.src -%}
+    {%- unless p contains '://' -%}{%- assign p = p | relative_url -%}{%- endunless -%}
+<img src="{{ p }}" alt="{{ ph.alt | default: ph.title | escape }}" loading="lazy" data-zoom data-title="{{ ph.title | default: page.title | escape }}"{% if g_date != "" %} data-date="{{ g_date }}"{% endif %}>
+  {%- endfor -%}
+{%- endif -%}
+</div>
+{%- if include.caption -%}<figcaption>{{ include.caption | markdownify | remove: '<p>' | remove: '</p>' | strip }}</figcaption>{%- endif -%}
+</figure>

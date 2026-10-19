@@ -1,0 +1,7 @@
+{%- comment -%} Icons: Font Awesome Free (CC BY 4.0) — fontawesome.com {%- endcomment -%}
+<nav class="social" aria-label="Social links">
+  {%- if site.social.twitter -%}<a href="{{ site.social.twitter }}" aria-label="Twitter" rel="me noopener">{% include icons/twitter.svg %}</a>{%- endif -%}
+  {%- if site.social.instagram -%}<a href="{{ site.social.instagram }}" aria-label="Instagram" rel="me noopener">{% include icons/instagram.svg %}</a>{%- endif -%}
+  {%- if site.social.linkedin -%}<a href="{{ site.social.linkedin }}" aria-label="LinkedIn" rel="me noopener">{% include icons/linkedin.svg %}</a>{%- endif -%}
+  {%- if site.social.email -%}<a href="mailto:{{ site.social.email }}" aria-label="Email">{% include icons/email.svg %}</a>{%- endif -%}
+</nav>

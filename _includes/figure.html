@@ -1,0 +1,12 @@
+{%- comment -%}
+  One image with an optional caption.
+  {% include figure.html src="/assets/images/photo.jpg" caption="Words" title="Shown in the viewer" width="wide" %}
+  width: (blank) = text width · "wide" = breaks out of the column · "full" = edge to edge
+  title: optional; the viewer shows the caption if there's no title
+{%- endcomment -%}
+{%- assign img = include.src -%}
+{%- unless img contains '://' -%}{%- assign img = include.src | relative_url -%}{%- endunless -%}
+{%- assign f_title = include.title | default: include.caption | markdownify | strip_html | strip -%}
+<figure class="figure {{ include.width }}"><img src="{{ img }}" alt="{{ include.alt | default: f_title | escape }}" loading="lazy" data-zoom data-title="{{ f_title | default: page.title | escape }}"{% if page.date %} data-date="{{ page.date | date: '%B %-d, %Y' }}"{% endif %}>
+{%- if include.caption -%}<figcaption>{{ include.caption | markdownify | remove: '<p>' | remove: '</p>' | strip }}</figcaption>{%- endif -%}
+</figure>

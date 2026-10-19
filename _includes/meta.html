@@ -1,0 +1,6 @@
+{%- comment -%} Date · author · reading time. Pass post=… {%- endcomment -%}
+{%- assign p = include.post -%}
+{%- assign words = p.content | strip_html | number_of_words -%}
+{%- assign minutes = words | plus: 199 | divided_by: 200 -%}
+{%- if minutes < 1 -%}{%- assign minutes = 1 -%}{%- endif -%}
+<p class="meta"><time datetime="{{ p.date | date_to_xmlschema }}">{{ p.date | date: "%B %-d, %Y" }}</time><span>{{ p.author | default: site.author }}</span><span>{{ minutes }} min read</span></p>

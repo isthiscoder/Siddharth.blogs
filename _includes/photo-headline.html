@@ -1,0 +1,11 @@
+{%- comment -%} One image headline on the front page. Params: src, title, date, link {%- endcomment -%}
+{%- assign ph_src = include.src -%}
+{%- unless ph_src contains '://' -%}{%- assign ph_src = ph_src | relative_url -%}{%- endunless -%}
+<li>
+  <button class="headline" type="button" data-open-photo>
+    <span class="tag">Images</span>
+    <span class="h-title">{{ include.title }}</span>
+    <span class="h-meta">{{ include.date | date: "%b %-d, %Y" }}</span>
+    <img class="h-thumb" src="{{ ph_src }}" alt="" loading="lazy" data-zoom data-title="{{ include.title | escape }}" data-date="{{ include.date | date: '%B %-d, %Y' }}" data-post="{{ include.link }}">
+  </button>
+</li>

@@ -1,0 +1,24 @@
+---
+layout: default
+---
+<article class="post">
+  {% include meta.html post=page %}
+  <h1 class="post-title">{{ page.title }}</h1>
+  {% if page.subtitle %}<p class="post-subtitle">{{ page.subtitle }}</p>{% endif %}
+
+  {% if page.cover %}
+  <figure class="figure wide cover">
+    <img src="{{ page.cover | relative_url }}" alt="" data-zoom data-title="{{ page.cover_caption | default: page.title | markdownify | strip_html | strip | escape }}" data-date="{{ page.date | date: '%B %-d, %Y' }}">
+    {% if page.cover_caption %}<figcaption>{{ page.cover_caption | markdownify | remove: '<p>' | remove: '</p>' | strip }}</figcaption>{% endif %}
+  </figure>
+  {% endif %}
+
+  <div class="prose">
+    {{ content }}
+  </div>
+
+  <nav class="post-nav">
+    {% if page.previous %}<a class="prev" href="{{ page.previous.url | relative_url }}"><small>Previous</small>{{ page.previous.title }}</a>{% else %}<span></span>{% endif %}
+    {% if page.next %}<a class="next" href="{{ page.next.url | relative_url }}"><small>Next</small>{{ page.next.title }}</a>{% endif %}
+  </nav>
+</article>

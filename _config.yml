@@ -1,0 +1,52 @@
+# ─────────────────────────────────────────────
+#  Site settings — edit these first
+# ─────────────────────────────────────────────
+title: "Siddharth Singh"
+author: "Siddharth Singh"
+description: "Essays, images and films by Siddharth Singh — on technology, science, business and ideas."
+
+# Link preview image used when a post has no cover/thumbnail of its own (1200×630)
+og_image: /assets/images/og-default.png
+
+# Top-right menu (order = order shown)
+sections:
+  - { name: "Writings", url: "/writings/" }
+  - { name: "Images",   url: "/images/" }
+  - { name: "Videos",   url: "/videos/" }
+  - { name: "Updates",  url: "/updates/" }
+  - { name: "About",    url: "/about/" }
+
+# Bottom-left icons — put your real links here
+social:
+  twitter:   "https://x.com/yourhandle"
+  instagram: "https://instagram.com/yourhandle"
+  linkedin:  "https://linkedin.com/in/yourhandle"
+  email:     "you@example.com"
+
+# Your domain. Leave baseurl empty when the site lives at the root of the domain.
+url: "https://isidd.com"
+baseurl: ""
+
+# ─────────────────────────────────────────────
+#  Build settings — you can leave these alone
+# ─────────────────────────────────────────────
+permalink: /:categories/:title/
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+plugins:
+  - jekyll-feed
+excerpt_separator: "<!--more-->"
+
+defaults:
+  - scope: { path: "", type: "posts" }
+    values: { layout: post, category: writings }
+  - scope: { path: "" }
+    values: { layout: page }
+
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor
