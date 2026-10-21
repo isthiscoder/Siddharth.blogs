@@ -3,7 +3,7 @@
 # ─────────────────────────────────────────────
 title: "Siddhartha"
 author: "Siddharth Singh"
-description: "Essays, images and films by Siddharth Singh — on technology, science, business and ideas."
+description: "I'm a curious guy Learning & Sharing about Science , Technology , Business , Research & Philosophy"
 
 # Link preview image used when a post has no cover/thumbnail of its own (1200×630)
 og_image: /assets/images/og-default.png
@@ -18,10 +18,10 @@ sections:
 
 # Bottom-left icons — put your real links here
 social:
-  twitter:   "https://x.com/yourhandle"
-  instagram: "https://instagram.com/yourhandle"
-  linkedin:  "https://linkedin.com/in/yourhandle"
-  email:     "you@example.com"
+  twitter:   "https://x.com/siiddharrt"
+  instagram: "https://instagram.com/siidhharrt"
+  linkedin:  "https://linkedin.com/in/siiddharrt"
+  email:     "mailto:isidd.dev@gmail.com"
 
 # Your domain. Leave baseurl empty when the site lives at the root of the domain.
 url: "https://isidd.com"
