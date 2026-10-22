@@ -3,13 +3,14 @@
   Preview image, first match wins:
     image: → cover: → thumbnail: → YouTube thumbnail of video: → first of photos: → site og_image
 {%- endcomment -%}
-{%- if page.title and page.url != "/" -%}
-  {%- assign seo_title = page.title -%}
-  {%- if page.page_num and page.page_num > 1 -%}{%- assign seo_title = seo_title | append: " · page " | append: page.page_num -%}{%- endif -%}
-  {%- assign seo_title = seo_title | append: " · " | append: site.title -%}
-{%- else -%}
-  {%- assign seo_title = site.title -%}
-{%- endif -%}
+   {%- assign tab = site.tab_title | default: site.title -%}
+   {%- if page.title and page.url != "/" -%}
+     {%- assign seo_title = page.title -%}
+     {%- if page.page_num and page.page_num > 1 -%}{%- assign seo_title = seo_title | append: " · page " | append: page.page_num -%}{%- endif -%}
+     {%- assign seo_title = seo_title | append: " · " | append: tab -%}
+   {%- else -%}
+     {%- assign seo_title = tab -%}
+   {%- endif -%}
 {%- assign seo_desc = page.subtitle | default: page.intro | default: page.excerpt | default: site.description | strip_html | normalize_whitespace | strip | truncate: 180 -%}
 
 {%- assign seo_img = page.image | default: page.cover | default: page.thumbnail -%}
