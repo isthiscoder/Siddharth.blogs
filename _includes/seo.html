@@ -4,7 +4,9 @@
     image: → cover: → thumbnail: → YouTube thumbnail of video: → first of photos: → site og_image
 {%- endcomment -%}
 {%- if page.title and page.url != "/" -%}
-  {%- assign seo_title = page.title | append: " · " | append: site.title -%}
+  {%- assign seo_title = page.title -%}
+  {%- if page.page_num and page.page_num > 1 -%}{%- assign seo_title = seo_title | append: " · page " | append: page.page_num -%}{%- endif -%}
+  {%- assign seo_title = seo_title | append: " · " | append: site.title -%}
 {%- else -%}
   {%- assign seo_title = site.title -%}
 {%- endif -%}

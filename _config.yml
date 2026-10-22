@@ -8,13 +8,18 @@ description: "I'm a curious guy Learning & Sharing about Science , Technology , 
 # Link preview image used when a post has no cover/thumbnail of its own (1200×630)
 og_image: /assets/images/og-default.png
 
-# Top-right menu (order = order shown)
+# Menu (order = order shown)
 sections:
+  - { name: "About",    url: "/about/" }
   - { name: "Writings", url: "/writings/" }
   - { name: "Images",   url: "/images/" }
   - { name: "Videos",   url: "/videos/" }
   - { name: "Updates",  url: "/updates/" }
-  - { name: "About",    url: "/about/" }
+
+# How many to show
+home_count: 5          # newest items per section on the home page
+# Items per page on the "Open more" pages are set in writings.html,
+# images.html, videos.html and updates.html (per_page:).
 
 # Bottom-left icons — put your real links here
 social:

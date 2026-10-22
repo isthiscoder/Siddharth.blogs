@@ -1,92 +1,157 @@
 ---
-layout: default
+layout: base
 ---
 {%- comment -%}
-  Front page:
-  1. Your newest post (any section) as a short lead.
-  2. Five newest headlines from Writings, Images and Videos, each with an "Open more" link.
+  Home: split like isidd.dev.
+  Left (stays put): name, one-line intro, section menu, social icons.
+  Right (scrolls): About, then the newest few Writings, Images, Videos and Updates,
+  each with "Open more" to its full, paged list. How many: home_count in _config.yml.
 {%- endcomment -%}
+{%- assign n = site.home_count | default: 5 -%}
+{%- assign about = site.pages | where: "url", "/about/" | first -%}
+<div class="split">
+  <aside class="intro">
+    <div class="intro-top">
+      <h1 class="home-name"><a href="{{ '/' | relative_url }}">{{ site.title }}</a></h1>
+      {% if site.description %}<p class="home-line">{{ site.description }}</p>{% endif %}
+      <nav class="toc" aria-label="Sections">
+        <a href="#about">About</a>
+        <a href="#writings">Writings</a>
+        <a href="#images">Images</a>
+        <a href="#videos">Videos</a>
+        <a href="#updates">Updates</a>
+      </nav>
+    </div>
+    {% include social.html %}
+  </aside>
 
-{% assign latest = site.posts.first %}
-{% if latest %}
-<article class="lead">
-  {% include meta.html post=latest %}
-  <p class="lead-tag"><span class="tag">{{ latest.category | default: "writings" }}</span><span class="lead-label">Latest</span></p>
-  <h1 class="post-title"><a href="{{ latest.url | relative_url }}">{{ latest.title }}</a></h1>
-  <p class="lead-excerpt">{{ latest.subtitle | default: latest.excerpt | strip_html | truncatewords: 40 }}</p>
-  <a class="more" href="{{ latest.url | relative_url }}">Continue reading</a>
-</article>
-{% endif %}
+  <main class="work" id="top">
 
-{%- comment -%} ── Writings ── {%- endcomment -%}
-{% assign writings = site.categories.writings %}
-{% if writings %}
-<section class="shelf" aria-labelledby="shelf-writings">
-  <h2 class="shelf-title" id="shelf-writings">Writings</h2>
-  <ol class="headlines">
-    {% for post in writings limit: 5 %}
-    {%- assign words = post.content | strip_html | number_of_words -%}
-    {%- assign minutes = words | plus: 199 | divided_by: 200 -%}
-    <li>
-      <a class="headline" href="{{ post.url | relative_url }}">
-        <span class="tag">Writings</span>
-        <span class="h-title">{{ post.title }}</span>
-        <span class="h-meta">{{ post.date | date: "%b %-d, %Y" }} · {{ minutes }} min</span>
-      </a>
-    </li>
-    {% endfor %}
-  </ol>
-  <a class="open-more" href="{{ '/writings/' | relative_url }}">Open more</a>
-</section>
-{% endif %}
+    {%- if about %}
+    <section id="about" class="block" aria-labelledby="h-about">
+      <h2 class="label" id="h-about">About</h2>
+      <div class="about-text">{{ about.content | markdownify }}</div>
+    </section>
+    {%- endif %}
 
-{%- comment -%} ── Images: five newest photos; tapping one opens it in the viewer ── {%- endcomment -%}
-{% assign imgposts = site.categories.images %}
-{% if imgposts %}
-<section class="shelf" aria-labelledby="shelf-images">
-  <h2 class="shelf-title" id="shelf-images">Images</h2>
-  <ol class="headlines">
-    {%- assign shown = 0 -%}
-    {%- for post in imgposts -%}
-      {%- if shown >= 5 -%}{%- break -%}{%- endif -%}
-      {%- assign link = post.url | relative_url -%}
-      {%- if post.photos -%}
-        {%- for ph in post.photos -%}
-          {%- if shown < 5 -%}
-            {%- assign t = ph.title | default: post.title -%}
-            {%- include photo-headline.html src=ph.src title=t date=post.date link=link -%}
+    {%- comment -%} ── Writings ── {%- endcomment -%}
+    {%- assign writings = site.categories.writings %}
+    <section id="writings" class="block" aria-labelledby="h-writings">
+      <h2 class="label" id="h-writings">Writings</h2>
+      {%- if writings and writings.size > 0 %}
+      <ul class="rows">
+        {%- for post in writings limit: n %}
+        {%- assign words = post.content | strip_html | number_of_words -%}
+        {%- assign minutes = words | plus: 199 | divided_by: 200 -%}
+        {%- if minutes < 1 %}{% assign minutes = 1 %}{% endif %}
+        <li>
+          <a class="row" href="{{ post.url | relative_url }}">
+            <span class="r-title">{{ post.title }}</span>
+            <span class="r-meta">{{ post.date | date: "%b %-d, %Y" }} · {{ minutes }} min</span>
+            {%- if post.subtitle %}<span class="r-note">{{ post.subtitle }}</span>{% endif %}
+          </a>
+        </li>
+        {%- endfor %}
+      </ul>
+      <a class="more" href="{{ '/writings/' | relative_url }}">Open more</a>
+      {%- else %}<p class="empty">Coming soon.</p>{% endif %}
+    </section>
+
+    {%- comment -%} ── Images: the newest photos; tapping one opens the viewer ── {%- endcomment -%}
+    {%- assign imgposts = site.categories.images %}
+    <section id="images" class="block" aria-labelledby="h-images">
+      <h2 class="label" id="h-images">Images</h2>
+      {%- if imgposts and imgposts.size > 0 %}
+      <div class="strip">
+        {%- assign shown = 0 -%}
+        {%- for post in imgposts -%}
+          {%- if shown >= n -%}{%- break -%}{%- endif -%}
+          {%- assign d = post.date | date: "%B %-d, %Y" -%}
+          {%- assign link = post.url | relative_url -%}
+          {%- if post.photos -%}
+            {%- for ph in post.photos -%}
+              {%- if shown < n -%}
+                {%- assign p = ph.src -%}
+                {%- unless p contains '://' -%}{%- assign p = p | relative_url -%}{%- endunless -%}
+                <img src="{{ p }}" alt="{{ ph.alt | default: ph.title | escape }}" loading="lazy" data-zoom data-title="{{ ph.title | default: post.title | escape }}" data-date="{{ d }}" data-post="{{ link }}">
+                {%- assign shown = shown | plus: 1 -%}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- elsif post.cover -%}
+            <img src="{{ post.cover | relative_url }}" alt="{{ post.title | escape }}" loading="lazy" data-zoom data-title="{{ post.title | escape }}" data-date="{{ d }}" data-post="{{ link }}">
             {%- assign shown = shown | plus: 1 -%}
           {%- endif -%}
         {%- endfor -%}
-      {%- elsif post.cover -%}
-        {%- include photo-headline.html src=post.cover title=post.title date=post.date link=link -%}
-        {%- assign shown = shown | plus: 1 -%}
-      {%- endif -%}
-    {%- endfor -%}
-  </ol>
-  <a class="open-more" href="{{ '/images/' | relative_url }}">Open more</a>
-</section>
-{% endif %}
+      </div>
+      <a class="more" href="{{ '/images/' | relative_url }}">Open more</a>
+      {%- else %}<p class="empty">Coming soon.</p>{% endif %}
+    </section>
 
-{%- comment -%} ── Videos: tapping a headline opens the video where it lives ── {%- endcomment -%}
-{% assign vidposts = site.categories.videos %}
-{% if vidposts %}
-<section class="shelf" aria-labelledby="shelf-videos">
-  <h2 class="shelf-title" id="shelf-videos">Videos</h2>
-  <ol class="headlines">
-    {% for post in vidposts limit: 5 %}
-    {%- assign vd_url = post.video | default: post.url | relative_url -%}
-    {%- assign vd_thumb = post.thumbnail | default: post.cover -%}
-    {%- include video-data.html -%}
-    <li>
-      <a class="headline" href="{{ vd_url }}"{% if post.video %} target="_blank" rel="noopener"{% endif %} aria-label="{{ post.title | escape }}, {{ vd_platform }}">
-        <span class="tag">Videos</span>
-        <span class="h-title">{{ post.title }}<span class="h-out" aria-hidden="true"> ↗</span></span>
-        <span class="h-meta">{% if post.duration %}{{ post.duration }} · {% endif %}{{ post.date | date: "%b %-d, %Y" }}</span>
-      </a>
-    </li>
-    {% endfor %}
-  </ol>
-  <a class="open-more" href="{{ '/videos/' | relative_url }}">Open more</a>
-</section>
-{% endif %}
+    {%- comment -%} ── Videos: thumbnails link to where the video lives ── {%- endcomment -%}
+    {%- assign vidposts = site.categories.videos %}
+    <section id="videos" class="block" aria-labelledby="h-videos">
+      <h2 class="label" id="h-videos">Videos</h2>
+      {%- if vidposts and vidposts.size > 0 %}
+      <ul class="rows">
+        {%- for post in vidposts limit: n %}
+        {%- assign vd_url = post.video | default: post.url | relative_url -%}
+        {%- assign vd_thumb = post.thumbnail | default: post.cover -%}
+        {%- include video-data.html -%}
+        <li>
+          <a class="row has-thumb" href="{{ vd_url }}"{% if post.video %} target="_blank" rel="noopener"{% endif %} aria-label="{{ post.title | escape }}, {{ vd_platform }}">
+            <span class="r-thumb">{% if vd_thumb %}<img src="{{ vd_thumb }}" alt="" loading="lazy">{% endif %}<span class="mini-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg></span></span>
+            <span class="r-title">{{ post.title }}<span class="r-out" aria-hidden="true">&nbsp;↗</span></span>
+            <span class="r-meta">{% if post.duration %}{{ post.duration }} · {% endif %}{{ post.date | date: "%b %-d, %Y" }}</span>
+          </a>
+        </li>
+        {%- endfor %}
+      </ul>
+      <a class="more" href="{{ '/videos/' | relative_url }}">Open more</a>
+      {%- else %}<p class="empty">Coming soon.</p>{% endif %}
+    </section>
+
+    {%- comment -%} ── Updates ── {%- endcomment -%}
+    {%- assign updates = site.categories.updates %}
+    <section id="updates" class="block" aria-labelledby="h-updates">
+      <h2 class="label" id="h-updates">Updates</h2>
+      {%- if updates and updates.size > 0 %}
+      <ol class="upd-list">
+        {%- for post in updates limit: n %}
+        <li>
+          <time datetime="{{ post.date | date: '%Y-%m-%d' }}">{{ post.date | date: "%b %-d, %Y" }}</time>
+          <span class="u-body">
+            <a class="u-head" href="{{ post.url | relative_url }}">{{ post.title }}</a>
+            {%- assign note = post.subtitle | default: post.excerpt | strip_html | strip | truncatewords: 24 %}
+            {%- if note != "" %}<span class="u-note">{{ note }}</span>{% endif %}
+          </span>
+        </li>
+        {%- endfor %}
+      </ol>
+      <a class="more" href="{{ '/updates/' | relative_url }}">Open more</a>
+      {%- else %}<p class="empty">Coming soon.</p>{% endif %}
+    </section>
+
+    <footer class="home-foot">
+      <p class="copyline">&copy; {{ 'now' | date: "%Y" }} {{ site.author }}. All rights reserved.</p>
+    </footer>
+  </main>
+</div>
+
+<script>
+  // Highlight the section you're reading in the left-hand menu.
+  (function () {
+    var links = document.querySelectorAll('.toc a');
+    if (!('IntersectionObserver' in window) || !links.length) return;
+    var map = {};
+    links.forEach(function (a) { map[a.getAttribute('href').slice(1)] = a; });
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          links.forEach(function (a) { a.classList.remove('is-active'); });
+          if (map[e.target.id]) map[e.target.id].classList.add('is-active');
+        }
+      });
+    }, { rootMargin: '-40% 0px -55% 0px' });
+    Object.keys(map).forEach(function (id) { var el = document.getElementById(id); if (el) io.observe(el); });
+  })();
+</script>
